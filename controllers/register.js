@@ -1,32 +1,41 @@
 const handleRegister = (req, res, db, bcrypt, saltRounds) => {
-	const { email, name, password } = req.body;
+	const { email, first_name, last_name, password } = req.body;
 	// creating hash for password
 	const salt = bcrypt.genSaltSync(saltRounds);
 	const hash = bcrypt.hashSync(password, salt);
 	// updating login and users tables in the database
 	db.transaction(trx => {
 		trx.insert({
-			hash: hash,
-			email: email
+			first_name: first_name,
+			last_name: last_name,
+			email: email,
+			joined: new Date()	
 		})
-		.into('login')
+		.into('users')
 		.returning('email')
 		.then(loginEmail => {
-			return trx('users')
-				.returning('*')
+			return trx('login')
+				.returning('email')
 				.insert ({
-					name: name,
-					email: loginEmail[0],
-					joined: new Date()		
+					hash: hash,
+					email: loginEmail[0] 
 				})
-				.then(user => {
-					res.json(user[0]);
+				.then(userEmail => {
+					db.select('*').from('users').where('email', userEmail[0])
+					.then(user => {
+						userInfo = Object.assign(user[0], {lists: []} , {tasks: []});
+						res.json({user: userInfo});						
+					})
+					.catch(err => {res.status(400).json('unable to get user')})
 				})				
 		})
 		.then(trx.commit)
 		.catch(trx.rollback)
 	})
-	.catch(err => res.status(400).json('unable to register'))
+	.catch(err => {
+		res.status(400).json('unable to register');
+		console.log(err);
+	})
 }
 
 module.exports = {

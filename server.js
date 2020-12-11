@@ -8,7 +8,12 @@ const knex = require('knex')
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
-const lists = require('./controllers/lists');
+const add_list = require('./controllers/add_list');
+const change_list = require('./controllers/change_list_name');
+const delete_list = require('./controllers/delete_list');
+const add_task = require('./controllers/add_task');
+const change_task = require('./controllers/change_task_name');
+const delete_task = require('./controllers/delete_task');
 
 // connecting the database to the server
 const db = knex({
@@ -42,10 +47,22 @@ app.post('/register', (req, res) => register.handleRegister(req, res, db, bcrypt
 app.get('/profile/:id', (req, res) => profile.handleGetProfile(req, res, db))
 
 // handelling adding new list
-app.post('/lists', (req, res) => lists.handleAddingList(req, res, db))
+app.post('/lists', (req, res) => add_list.handleAddingList(req, res, db))
 
-// PUT -> change list name
+// handelling changing list name
+app.put('/lists', (req, res) => change_list.handleChangingListName(req, res, db))
+
 // DELETE -> delete a list
+app.delete('/lists', (req, res) => delete_list.handleDeletingListName(req, res, db))
+
+// handelling adding new task
+app.post('/tasks', (req, res) => add_task.handleAddingTask(req, res, db))
+
+// handelling changing task name
+app.put('/tasks', (req, res) => change_task.handleChangingTaskName(req, res, db))
+
+// DELETE -> delete a list
+app.delete('/tasks', (req, res) => delete_task.handleDeletingTaskName(req, res, db))
 
 app.listen(3000, () => {
 	console.log('app is running on port 3000');

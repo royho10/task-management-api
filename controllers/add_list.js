@@ -7,17 +7,16 @@ handleAddingList = (req, res, db) => {
 			db('lists')			
 			.insert({
 				email: email,
-				title: title,
+				title: title
 			})
-			.returning('listID')			
-			.then(listID => {
-				db.select('*').from('lists')
-				.where('listID', '=', JSON.stringify(listID))
-				//.increment('listCount', 1)
-				.then(something => {
-					res.json(something)
+			.returning('*')
+			.then(list => {
+				db.select('*').from('lists').where('email', '=', email).orderBy('list_id')			
+				.then(lists => {
+						res.json(lists)
 				})				
-			})
+			})	
+			.catch(err => res.status(400).json('unable to add list'))
 		} else {
 			res.status(400).json('no such user');
 		}
