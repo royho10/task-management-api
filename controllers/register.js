@@ -3,6 +3,10 @@ const handleRegister = (req, res, db, bcrypt, saltRounds) => {
 	// creating hash for password
 	const salt = bcrypt.genSaltSync(saltRounds);
 	const hash = bcrypt.hashSync(password, salt);
+	// form validation
+	if ( !email || !first_name || !last_name || !password) {
+		return res.status(400).json('incorrect form submission');
+	}
 	// updating login and users tables in the database
 	db.transaction(trx => {
 		trx.insert({
