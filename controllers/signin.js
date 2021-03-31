@@ -1,7 +1,7 @@
 const handleSignin = (req, res, db, bcrypt) => {
 	const { email, password } = req.body;
 	// form validation
-	if ( !email || password) {
+	if ( !email || !password) {
 		return res.status(400).json('incorrect form submission');
 	}
 	db.select('email', 'hash').from('login')
@@ -11,8 +11,7 @@ const handleSignin = (req, res, db, bcrypt) => {
 		const isValid = bcrypt.compareSync(password, data[0].hash);
 		if (isValid) {
 			// getting user's information
-			return db.select('*').from('users')
-			.where('email', '=', email)
+			return db.select('first_name', 'last_name', 'first_name', 'email').from('users').where('email', '=', email)
 			.then(user => {
 				// getting user's lists
 				db.select('list_id', 'list_count', 'title').from('lists').where('email', email).orderBy('list_id')
@@ -21,7 +20,7 @@ const handleSignin = (req, res, db, bcrypt) => {
 					db.select('task_id', 'task_count', 'list_id', 'title').from('tasks').where('email', email).orderBy('task_id')
 					.then(tasks => {
 						userInfo = Object.assign(user[0], {lists: lists} , {tasks: tasks});
-						res.json({user: userInfo});
+						res.json(userInfo);
 					})
 				})
 			})

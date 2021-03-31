@@ -13,7 +13,7 @@ const handleRegister = (req, res, db, bcrypt, saltRounds) => {
 			first_name: first_name,
 			last_name: last_name,
 			email: email,
-			joined: new Date()	
+			joined: new Date()
 		})
 		.into('users')
 		.returning('email')
@@ -25,12 +25,14 @@ const handleRegister = (req, res, db, bcrypt, saltRounds) => {
 					email: loginEmail[0] 
 				})
 				.then(userEmail => {
-					db.select('*').from('users').where('email', userEmail[0])
-					.then(user => {
-						userInfo = Object.assign(user[0], {lists: []} , {tasks: []});
-						res.json({user: userInfo});						
-					})
-					.catch(err => {res.status(400).json('unable to get user')})
+					userInfo = {
+						first_name: first_name, 
+						last_name: last_name,
+						email: email, 
+						lists: [], 
+						tasks: []
+					};
+					res.json(userInfo);						
 				})				
 		})
 		.then(trx.commit)
@@ -44,4 +46,4 @@ const handleRegister = (req, res, db, bcrypt, saltRounds) => {
 
 module.exports = {
 	handleRegister: handleRegister
-}
+};
