@@ -15,6 +15,8 @@ const add_task = require('./controllers/add_task');
 const change_task = require('./controllers/change_task_name');
 const delete_task = require('./controllers/delete_task');
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
 // connecting the database to the server
 const db = knex({
 	client: 'pg',
