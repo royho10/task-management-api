@@ -19,7 +19,7 @@ const delete_task = require('./controllers/delete_task');
 const db = knex({
 	client: 'pg',
 	connection: {
-		host: '127.0.0.1',
+		host: 'postgresql-cylindrical-30836',
 		user: 'postgres',
 		password: '',
 		database: 'taskmanagement'
@@ -34,7 +34,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.get('/', (req,res) => {
-	res.send(/*db.users*/'it is working');
+	res.send(db.users);
 })
 
 // handelling signin
