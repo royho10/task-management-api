@@ -65,6 +65,6 @@ app.put('/tasks', (req, res) => change_task.handleChangingTaskName(req, res, db)
 app.delete('/tasks', (req, res) => delete_task.handleDeletingTaskName(req, res, db))
 
 
-app.listen(3000, () => {
-	console.log('app is running on port 3000');
+app.listen(process.env.PORT || 3000, () => {
+	console.log(`app is running on port ${process.env.PORT}`);
 })
