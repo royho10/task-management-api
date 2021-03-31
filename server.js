@@ -19,10 +19,8 @@ const delete_task = require('./controllers/delete_task');
 const db = knex({
 	client: 'pg',
 	connection: {
-		host: 'postgresql-cylindrical-30836',
-		user: 'postgres',
-		password: '',
-		database: 'taskmanagement'
+		connectionString: process.env.DATABASE_URL,
+		ssl: true
 	}
 });
 
