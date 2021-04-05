@@ -21,9 +21,17 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 const db = knex({
 	client: 'pg',
 	connection: {
+		host: '127.0.0.1',
+		user: 'postgres',
+		password: '',
+		database: 'taskmanagement'
+	}
+	/*
+	connection: {
 		connectionString: process.env.DATABASE_URL,
 		ssl: true
 	}
+	*/
 });
 
 const app = express();
@@ -65,6 +73,6 @@ app.put('/tasks', (req, res) => change_task.handleChangingTaskName(req, res, db)
 app.delete('/tasks', (req, res) => delete_task.handleDeletingTaskName(req, res, db))
 
 
-app.listen(process.env.PORT || 3000, () => {
-	console.log(`app is running on port ${process.env.PORT}`);
+app.listen(/*process.env.PORT || */3000, () => {
+	console.log(`app is running on port 3000 ${process.env.PORT}`);
 })

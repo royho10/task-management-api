@@ -11,13 +11,14 @@ const handleSignin = (req, res, db, bcrypt) => {
 		const isValid = bcrypt.compareSync(password, data[0].hash);
 		if (isValid) {
 			// getting user's information
+			console.log("hii");
 			return db.select('first_name', 'last_name', 'first_name', 'email').from('users').where('email', '=', email)
 			.then(user => {
 				// getting user's lists
 				db.select('list_id', 'list_count', 'title').from('lists').where('email', email).orderBy('list_id')
 				.then(lists => {
 					// getting user's tasks
-					db.select('task_id', 'task_count', 'list_id', 'title').from('tasks').where('email', email).orderBy('task_id')
+					db.select('task_id', 'list_id', 'title').from('tasks').where('email', email).orderBy('task_id')
 					.then(tasks => {
 						userInfo = Object.assign(user[0], {lists: lists} , {tasks: tasks});
 						res.json(userInfo);
