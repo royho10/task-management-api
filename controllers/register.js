@@ -7,6 +7,10 @@ const handleRegister = (req, res, db, bcrypt, saltRounds) => {
 	if ( !email || !first_name || !last_name || !password) {
 		return res.status(400).json('incorrect form submission');
 	}
+	// handdling registration with already existing email
+	if (db.select('email').from('login').where('email', '=', email)) {
+		return res.status(400).json('email already exit');
+	}
 	// updating login and users tables in the database
 	db.transaction(trx => {
 		trx.insert({
