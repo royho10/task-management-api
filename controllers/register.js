@@ -8,39 +8,52 @@ const handleRegister = (req, res, db, bcrypt, saltRounds) => {
 		return res.status(400).json('incorrect form submission');
 	}
 	// handdling registration with already existing email
-	if (db.select('email').from('login').where('email', '=', email)) {
-		return res.status(400).json('email already exit');
-	}
-	// updating login and users tables in the database
-	db.transaction(trx => {
-		trx.insert({
-			first_name: first_name,
-			last_name: last_name,
-			email: email,
-			joined: new Date()
+	
+	/*if (db.select('email').from('login').where('email', '=', email)) {
+		db.select('email').from('login').where('email', '=', email)
+		.then(data => {
+			return res.json(data);
 		})
-		.into('users')
-		.returning('email')
-		.then(loginEmail => {
-			return trx('login')
-				.returning('email')
-				.insert ({
-					hash: hash,
-					email: loginEmail[0] 
+		
+	}*/
+	db.select('email').from('login').where('email', '=', email)
+	.then(selectedEmail => {
+		console.log(selectedEmail);
+		if (selectedEmail.length === 0) {
+			// updating login and users tables in the database
+			db.transaction(trx => {
+				trx.insert({
+					first_name: first_name,
+					last_name: last_name,
+					email: email,
+					joined: new Date()
 				})
-				.then(userEmail => {
-					userInfo = {
-						first_name: first_name, 
-						last_name: last_name,
-						email: email, 
-						lists: [], 
-						tasks: []
-					};
-					res.json(userInfo);						
-				})				
-		})
-		.then(trx.commit)
-		.catch(trx.rollback)
+				.into('users')
+				.returning('email')
+				.then(loginEmail => {
+					return trx('login')
+						.returning('email')
+						.insert ({
+							hash: hash,
+							email: loginEmail[0] 
+						})
+						.then(userEmail => {
+							userInfo = {
+								first_name: first_name, 
+								last_name: last_name,
+								email: email, 
+								lists: [], 
+								tasks: []
+							};
+							res.json(userInfo);						
+						})				
+				})
+				.then(trx.commit)
+				.catch(trx.rollback)
+			})
+		} else {
+			return res.status(400).json('user already exist');
+		}
 	})
 	.catch(err => {
 		res.status(400).json('unable to register');
