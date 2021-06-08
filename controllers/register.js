@@ -18,7 +18,6 @@ const handleRegister = (req, res, db, bcrypt, saltRounds) => {
 	}*/
 	db.select('email').from('login').where('email', '=', email)
 	.then(selectedEmail => {
-		console.log(selectedEmail);
 		if (selectedEmail.length === 0) {
 			// updating login and users tables in the database
 			db.transaction(trx => {
